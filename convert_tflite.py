@@ -27,13 +27,24 @@ def setup_gdscript(model, url):
         np.float32: ".to_float32_array()",
         np.float64: ".to_float64_array()",
     }
+    from_types = {
+        np.int32: ".from_int32s(",
+        np.int64: ".from_int32s(",
+        np.byte: ".from_bytes(",
+        np.float32: ".from_float32s(",
+        np.float64: ".from_float64s(",
+    }
     inputs_with_type = ""
-    inputs = ""
     output = ""
     output_convert = ""
+    tensors = "var tensors: Array[IREETensor]"
     for input_detail in input_details:
         inputs_with_type += f"{input_detail['name']}: {types[input_detail['dtype']]},"
-        inputs += f"{input_detail['name']},"
+        tensors += f"""
+    tensors.push_back(IREETensor{from_types[input_detail['dtype']]}
+        {input_detail['name']},
+        [{','.join(map(str, input_detail["shape"]))}]
+    ))"""
     # TODO Add support for multiple outputs
     for output_detail in output_details:
         output += f"{types[output_detail['dtype']]}"
@@ -41,8 +52,6 @@ def setup_gdscript(model, url):
         break
     gdscript_file = f"""extends Node
 class_name IREEModule_{url}
-
-var module = load("res://addons/iree-zoo/{url}")
 
 func {url}({inputs_with_type}) -> {output}:\n
     var module : IREEModule = null
@@ -52,10 +61,11 @@ func {url}({inputs_with_type}) -> {output}:\n
         "macOS", "iOS":
             module = load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
         "Android":
-            module = load("res://addons/iree-zoo/{url}/iree.metal-llvm.vmfb")
+            module = load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
         _:
             assert(false, "Unsupported platform.")
-    var output_tensor := (await module.call_module("module.main", [{inputs}]).completed as Array).front() as IREETensor
+    {tensors}
+    var output_tensor := (await module.call_module("module.main", tensors).completed as Array).front() as IREETensor
     return output_tensor.get_data(){output_convert}
 """
     with open(f"build/addons/iree-zoo/{url}/{url}.gd", "w") as f:
