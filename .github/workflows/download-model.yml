@@ -22,6 +22,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: model
-          path: build/*
+          path: build/**
       - name: Print Run ID
         run: echo ${{ github.run_id }}

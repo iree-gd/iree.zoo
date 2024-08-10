@@ -2,3 +2,4 @@ kagglehub==0.2.9
 tensorflow==2.17.0
 iree-compiler==20240724.964
 iree-runtime==20240724.964
+iree-tools-tflite==20240724.964
