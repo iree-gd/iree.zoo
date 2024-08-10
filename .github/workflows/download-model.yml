@@ -1,11 +1,10 @@
 name: Convert model
 on:
   workflow_dispatch:
-
-inputs:
-  model_url:
-    description: 'Model URL'
-    required: true
+    inputs:
+      model_url:
+        description: 'Model URL'
+        required: true
 
 jobs:
   download-model:
