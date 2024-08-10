@@ -25,3 +25,5 @@ jobs:
         with:
           name: model
           path: build/*.vmfb
+      - name: Print Run ID
+        run: echo ${{ github.run_id }}
