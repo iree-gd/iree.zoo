@@ -19,11 +19,14 @@ if __name__ == "__main__":
                 path = os.path.join(root, file)
                 break
     print("Path to model file:", path)
-    
+    os.makedirs("build", exist_ok=True)
     for target in targets:
-        iree_tflite_compile.compile_file(
-            path,
-            output_file=f"iree.{target}.vmfb",
-            target_backends=[target],
-            import_only=False,
-        )
+        try:
+            iree_tflite_compile.compile_file(
+                path,
+                output_file=f"build/iree.{target}.vmfb",
+                target_backends=[target],
+                import_only=False,
+            )
+        except Exception as e:
+            print(e)

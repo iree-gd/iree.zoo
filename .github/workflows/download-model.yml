@@ -24,4 +24,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: model
-          path: iree.vmfb
+          path: build/*.vmfb
