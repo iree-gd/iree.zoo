@@ -20,10 +20,10 @@ if __name__ == "__main__":
                 break
     print("Path to model file:", path)
     
-
-    iree_tflite_compile.compile_file(
-        path,
-        output_file="iree.vmfb",
-        target_backends=targets,
-        import_only=False,
-    )
+    for target in targets:
+        iree_tflite_compile.compile_file(
+            path,
+            output_file=f"iree.{target}.vmfb",
+            target_backends=[target],
+            import_only=False,
+        )
