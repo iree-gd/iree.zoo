@@ -1,0 +1,28 @@
+name: Convert model
+on:
+  workflow_dispatch:
+
+inputs:
+  model_url:
+    description: 'Model URL'
+    required: true
+
+jobs:
+  download-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Install requirements.txt
+        run: |
+          pip install -r requirements.txt
+      - name: Download model
+        run: |
+          python convert_tflite.py ${{ inputs.model_url }}
+      - name: Upload model
+        uses: actions/upload-artifact@v4
+        with:
+          name: model
+          path: iree.vmfb
