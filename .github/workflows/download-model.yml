@@ -23,12 +23,18 @@ jobs:
         with:
           name: model
           path: build/**
-      - name: Print Run ID
-        run: echo ${{ github.run_id }}
-      - uses: CupOfTea696/gh-action-auto-release@v1.0.0
+      - name: Archive
+        shell: sh
+        run: |
+          ls
+          zip -r "${{ inputs.model_url }}.zip" build
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          title: "Release: ${{ inputs.model_url }}"
-          tag: "${{ inputs.model_url }}"
+          name: ${{ inputs.model_url }}
+          files: |
+            ${{ inputs.model_url }}.zip
+          generate_release_notes: false
           draft: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          fail_on_unmatched_files: true
