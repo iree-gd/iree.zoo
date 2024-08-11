@@ -50,7 +50,8 @@ def setup_gdscript(model, url):
         output += f"{types[output_detail['dtype']]}"
         output_convert += f"{convert_types[output_detail['dtype']]}"
         break
-    gdscript_file = f"""extends Node
+    gdscript_file = f"""@icon("res://addons/iree-gd/logo.svg")
+extends Node
 class_name IREEModule_{url}
 
 func {url}({inputs_with_type}) -> {output}:\n
