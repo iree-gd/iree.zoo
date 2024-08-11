@@ -18,6 +18,7 @@ jobs:
       - name: Download model
         run: |
           python convert_tflite.py ${{ inputs.model_url }}
+          echo "MODEL_NAME=$(cat model_name.txt)" >> $GITHUB_ENV
       - name: Upload model
         uses: actions/upload-artifact@v4
         with:
@@ -27,13 +28,13 @@ jobs:
         shell: sh
         run: |
           ls
-          zip -r "${{ inputs.model_url }}.zip" build
+          zip -r "${{ env.MODEL_NAME }}.zip" build
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ inputs.model_url }}
+          name: ${{ env.MODEL_NAME }}
           files: |
-            ${{ inputs.model_url }}.zip
+            "${{ env.MODEL_NAME }}.zip"
           generate_release_notes: false
           draft: false
           prerelease: false

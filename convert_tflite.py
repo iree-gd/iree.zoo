@@ -86,6 +86,8 @@ if __name__ == "__main__":
                 break
     print("Path to model file:", path)
     folder_name = args.url.replace('/', '_').replace('-', '_')
+    with open(f"model_name.txt", "w") as f:
+        f.write(folder_name)
     os.makedirs(f"build/addons/iree-zoo/{folder_name}", exist_ok=True)
     # First generate inputs/outputs
     setup_gdscript(path, folder_name)
