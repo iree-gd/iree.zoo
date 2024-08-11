@@ -68,7 +68,7 @@ func {url}({inputs_with_type}) -> {output}:\n
     var output_tensor := (await module.call_module("module.main", tensors).completed as Array).front() as IREETensor
     return output_tensor.get_data(){output_convert}
 """
-    with open(f"build/addons/iree-zoo/{url}/{url}.gd", "w") as f:
+    with open(f"build/{url}.gd", "w") as f:
         f.write(gdscript_file)
 
 if __name__ == "__main__":
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     folder_name = args.url.replace('/', '_').replace('-', '_')
     with open(f"model_name.txt", "w") as f:
         f.write(folder_name)
-    os.makedirs(f"build/addons/iree-zoo/{folder_name}", exist_ok=True)
+    os.makedirs(f"build", exist_ok=True)
     # First generate inputs/outputs
     setup_gdscript(path, folder_name)
     for target in targets:
@@ -97,7 +97,7 @@ if __name__ == "__main__":
             iree_tflite_compile.compile_file(
                 path,
                 input_type="tosa",
-                output_file=f"build/addons/iree-zoo/{folder_name}/iree.{target}.vmfb",
+                output_file=f"build/iree.{target}.vmfb",
                 target_backends=[target],
                 import_only=False,
             )
