@@ -20,54 +20,33 @@ def setup_gdscript(model, url):
         np.float32: "PackedFloat32Array",
         np.float64: "PackedFloat64Array",
     }
-    convert_types = {
-        np.int32: ".to_int32_array()",
-        np.int64: ".to_int64_array()",
-        np.byte: "",
-        np.float32: ".to_float32_array()",
-        np.float64: ".to_float64_array()",
-    }
-    from_types = {
-        np.int32: ".from_int32s(",
-        np.int64: ".from_int32s(",
-        np.byte: ".from_bytes(",
-        np.float32: ".from_float32s(",
-        np.float64: ".from_float64s(",
-    }
-    inputs_with_type = ""
-    output = ""
-    output_convert = ""
-    tensors = "var tensors: Array[IREETensor]"
+    inputs = ""
+    outputs = ""
     for input_detail in input_details:
-        inputs_with_type += f"{input_detail['name']}: {types[input_detail['dtype']]},"
-        tensors += f"""
-    tensors.push_back(IREETensor{from_types[input_detail['dtype']]}
-        {input_detail['name']},
-        [{','.join(map(str, input_detail["shape"]))}]
-    ))"""
-    # TODO Add support for multiple outputs
+        inputs += f"## {input_detail['name']}: {types[input_detail['dtype']]} {input_detail['shape']}\n"
     for output_detail in output_details:
-        output += f"{types[output_detail['dtype']]}"
-        output_convert += f"{convert_types[output_detail['dtype']]}"
-        break
+        outputs += f"\n## {output_detail['name']}: {types[output_detail['dtype']]} {output_detail['shape']}"
     gdscript_file = f"""@icon("res://addons/iree-gd/logo.svg")
 extends Node
 class_name IREEModule_{url}
 
-func {url}({inputs_with_type}) -> {output}:\n
-    var module : IREEModule = null
-    match OS.get_name():
-        "Windows", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
-            module = load("res://addons/iree-zoo/{url}/iree.vulkan-spirv.vmfb")
-        "macOS", "iOS":
-            module = load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
-        "Android":
-            module = load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
-        _:
-            assert(false, "Unsupported platform.")
-    {tensors}
-    var output_tensor := (await module.call_module("module.main", tensors).completed as Array).front() as IREETensor
-    return output_tensor.get_data(){output_convert}
+var module: IREEModule
+
+## INPUTS
+{inputs}## ---
+## OUTPUTS{outputs}
+func main(inputs: Array[IREETensor]) -> Array[IREETensor]:
+    if module == null:
+        match OS.get_name():
+            "Windows", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
+                module = load("res://addons/iree-zoo/{url}/iree.vulkan-spirv.vmfb")
+            "macOS", "iOS":
+                module = load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
+            "Android":
+                module = load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
+            _:
+                assert(false, "Unsupported platform.")
+    return module.call_module("module.main", inputs)
 """
     with open(f"build/{url}.gd", "w") as f:
         f.write(gdscript_file)
