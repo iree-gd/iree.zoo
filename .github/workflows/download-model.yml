@@ -32,14 +32,14 @@ jobs:
         shell: sh
         run: |
           ls
-          zip -r "${{ env.MODEL_NAME }}.zip" build
+          zip -r "model.zip" build
           ls
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ env.MODEL_NAME }}
           files: |
-            ${{ env.MODEL_NAME }}.zip
+            model.zip
           generate_release_notes: false
           tag_name: ${{ env.MODEL_NAME }}
           draft: false
