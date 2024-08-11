@@ -38,7 +38,7 @@ jobs:
           files: |
             "${{ env.MODEL_NAME }}.zip"
           generate_release_notes: false
-          tag: ${{ env.MODEL_NAME }}
+          tag_name: ${{ env.MODEL_NAME }}
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
