@@ -4,6 +4,8 @@ on:
     inputs:
       model_url:
         description: 'Model URL'
+        type: string
+        default: 'kaggle/esrgan-tf2/tfLite/esrgan-tf2'
         required: true
 
 jobs:
