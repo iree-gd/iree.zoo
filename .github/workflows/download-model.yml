@@ -32,8 +32,8 @@ jobs:
         shell: sh
         run: |
           ls
-          zip -r "model.zip" build
-          ls
+          cd build
+          zip -r "../model.zip" *
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
