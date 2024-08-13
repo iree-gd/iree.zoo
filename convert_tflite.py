@@ -31,16 +31,16 @@ extends IREERunner
 class_name IREEModule_{url}
 
 func _load_module() -> IREEModule:
-    match OS.get_name():
-        "Windows", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
-           return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.vulkan-spirv.vmfb")
-        "macOS", "iOS":
-            return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
-        "Android":
-            return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
-        _:
-            assert(false, "Unsupported platform.")
-    return null
+	match OS.get_name():
+		"Windows", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
+			return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.vulkan-spirv.vmfb")
+		"macOS", "iOS":
+			return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
+		"Android":
+			return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
+		_:
+			assert(false, "Unsupported platform.")
+	return null
 
 ## INPUTS
 {inputs}## ---
