@@ -21,6 +21,7 @@ def setup_gdscript(model, url, original_url):
 		outputs += f"\n## {output_detail['name']}: {output_detail['dtype']} {output_detail['shape']}"
 	gdscript_file = f"""@icon("res://addons/iree-gd/logo.svg")
 extends IREERunner
+## {original_url}
 class_name IREEModule_{url}
 
 func _load_module() -> IREEModule:
