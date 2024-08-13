@@ -13,21 +13,12 @@ def setup_gdscript(model, url):
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
-    types = {
-        np.int32: "PackedInt32Array",
-        np.int64: "PackedInt64Array",
-        np.byte: "PackedByteArray",
-        np.uint8: "PackedByteArray",
-        np.int8: "PackedByteArray",
-        np.float32: "PackedFloat32Array",
-        np.float64: "PackedFloat64Array",
-    }
     inputs = ""
     outputs = ""
     for input_detail in input_details:
-        inputs += f"## {input_detail['name']}: {types[input_detail['dtype']]} {input_detail['shape']}\n"
+        inputs += f"## {input_detail['name']}: {input_detail['dtype']} {input_detail['shape']}\n"
     for output_detail in output_details:
-        outputs += f"\n## {output_detail['name']}: {types[output_detail['dtype']]} {output_detail['shape']}"
+        outputs += f"\n## {output_detail['name']}: {output_detail['dtype']} {output_detail['shape']}"
     gdscript_file = f"""@icon("res://addons/iree-gd/logo.svg")
 extends IREERunner
 class_name IREEModule_{url}
