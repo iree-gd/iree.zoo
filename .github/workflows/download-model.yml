@@ -37,11 +37,11 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ env.MODEL_NAME }}
+          name: ${{ inputs.model_url }}
           files: |
             model.zip
           generate_release_notes: false
-          tag_name: ${{ env.MODEL_NAME }}
+          tag_name: ${{ inputs.model_url }}
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
