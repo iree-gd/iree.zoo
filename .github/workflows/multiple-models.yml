@@ -1,0 +1,75 @@
+name: Download all models
+on:
+  workflow_dispatch:
+
+jobs:
+  download-all-models:
+    strategy:
+      matrix:
+        model_url:
+          - 'kaggle/esrgan-tf2/tfLite/esrgan-tf2'
+          - 'kaggle/yolo-v5/tfLite/tflite-tflite-model'
+          - 'google/movenet/tfLite/singlepose-lightning-tflite-int8'
+          - 'google/aiy/tfLite/vision-classifier-food-v1'
+          - 'google/aiy/tfLite/vision-classifier-birds-v1'
+          - 'google/aiy/tfLite/vision-classifier-insects-v1'
+          - 'google/aiy/tfLite/vision-classifier-plants-v1'
+          - 'google/mobilenet-v3/tfLite/large-075-224-classification'
+          - 'google/mobilenet-v3/tfLite/large-075-224-feature-vector'
+          - 'google/mobilenet-v3/tfLite/small-075-224-classification'
+          - 'google/mobilenet-v3/tfLite/small-075-224-feature-vector'
+          - 'google/landmarks/tfLite/classifier-africa-v1'
+          - 'google/landmarks/tfLite/classifier-asia-v1'
+          - 'google/landmarks/tfLite/classifier-europe-v1'
+          - 'google/landmarks/tfLite/classifier-north-america-v1'
+          - 'google/landmarks/tfLite/classifier-oceania-antarctica-v1'
+          - 'google/landmarks/tfLite/classifier-south-america-v1'
+          - 'google/mobilebert/tfLite/xs-qat-lite'
+          - 'google/arbitrary-image-stylization-v1/tfLite/256-int8-prediction'
+          - 'google/arbitrary-image-stylization-v1/tfLite/256-int8-transfer'
+          - 'google/yamnet/tfLite/tflite'
+          - 'google/yamnet/tfLite/classification-tflite'
+          - 'google/spice/tfLite/spice'
+          - 'google/mobile-object-localizer-v1/tfLite/default'
+          - 'google/cropnet/tfLite/classifier-cassava-disease-v1'
+          - 'tensorflow/smartreply/tfLite/default'
+          - 'tensorflow/deeplabv3/tfLite/default'
+          - 'tensorflow/mobilebert/tfLite/default'
+          - 'tensorflow/albert/tfLite/lite-base-squadv1'
+          - 'tensorflow/spam-detection/tfLite/tflite'
+          - 'spsayakpaul/cartoongan/tfLite/dr'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements.txt
+        run: |
+          pip install -r requirements.txt
+      - name: Download model
+        run: |
+          python convert_tflite.py ${{ model_url }}
+          echo "MODEL_NAME=$(cat model_name.txt)" >> $GITHUB_ENV
+      - name: Upload model
+        uses: actions/upload-artifact@v4
+        with:
+          name: model
+          path: build/**
+      - name: Archive
+        shell: sh
+        run: |
+          ls
+          cd build
+          zip -r "../model.zip" *
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ env.MODEL_NAME }}
+          files: |
+            model.zip
+          generate_release_notes: false
+          tag_name: ${{ env.MODEL_NAME }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
