@@ -49,7 +49,7 @@ jobs:
           pip install -r requirements.txt
       - name: Download model
         run: |
-          python convert_tflite.py ${{ model_url }}
+          python convert_tflite.py ${{ matrix.model_url }}
           echo "MODEL_NAME=$(cat model_name.txt)" >> $GITHUB_ENV
       - name: Upload model
         uses: actions/upload-artifact@v4
