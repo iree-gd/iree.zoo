@@ -49,7 +49,7 @@ if __name__ == "__main__":
     parser.add_argument("url", type=str, help="The model url from kaggle")
     args = parser.parse_args()
     path = kaggle_download.model_download(args.url)
-    targets = ['llvm-cpu', 'metal-spirv', 'vulkan-spirv', 'webgpu-spirv']
+    targets = ['llvm-cpu', 'metal-spirv', 'vulkan-spirv']
     print("Building for: ", targets)
     # Find .tflite file
     for root, dirs, files in os.walk(path):
@@ -65,15 +65,12 @@ if __name__ == "__main__":
     # First generate inputs/outputs
     setup_gdscript(path, folder_name)
     for target in targets:
-        try:
-            print("Compiling for: ", target)
-            iree_tflite_compile.compile_file(
-                path,
-                input_type="tosa",
-                output_file=f"build/iree.{target}.vmfb",
-                target_backends=[target],
-                import_only=False,
-            )
-            print("Compiled for: ", target)
-        except Exception as e:
-            print(e)
+		print("Compiling for: ", target)
+		iree_tflite_compile.compile_file(
+			path,
+			input_type="tosa",
+			output_file=f"build/iree.{target}.vmfb",
+			target_backends=[target],
+			import_only=False,
+		)
+		print("Compiled for: ", target)
