@@ -5,6 +5,7 @@ on:
 jobs:
   download-all-models:
     strategy:
+      fail-fast: false
       matrix:
         model_url:
           - 'kaggle/esrgan-tf2/tfLite/esrgan-tf2'
