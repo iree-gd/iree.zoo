@@ -52,11 +52,6 @@ jobs:
         run: |
           python convert_tflite.py ${{ matrix.model_url }}
           echo "MODEL_NAME=$(cat model_name.txt)" >> $GITHUB_ENV
-      - name: Upload model
-        uses: actions/upload-artifact@v4
-        with:
-          name: model
-          path: build/**
       - name: Archive
         shell: sh
         run: |
