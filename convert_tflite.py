@@ -8,7 +8,7 @@ import numpy as np
 import os
 
 
-def setup_gdscript(model, url):
+def setup_gdscript(model, url, original_url):
 	interpreter = tf.lite.Interpreter(model_path=model)
 	interpreter.allocate_tensors()
 	input_details = interpreter.get_input_details()
@@ -26,11 +26,11 @@ class_name IREEModule_{url}
 func _load_module() -> IREEModule:
 	match OS.get_name():
 		"Windows", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
-			return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.vulkan-spirv.vmfb")
+			return IREEModule.new().load("res://addons/iree-zoo/{original_url}/iree.vulkan-spirv.vmfb")
 		"macOS", "iOS":
-			return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
+			return IREEModule.new().load("res://addons/iree-zoo/{original_url}/iree.metal-spirv.vmfb")
 		"Android":
-			return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
+			return IREEModule.new().load("res://addons/iree-zoo/{original_url}/iree.llvm-cpu.vmfb")
 		_:
 			assert(false, "Unsupported platform.")
 	return null
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 		f.write(folder_name)
 	os.makedirs(f"build", exist_ok=True)
 	# First generate inputs/outputs
-	setup_gdscript(path, folder_name)
+	setup_gdscript(path, folder_name, args.url)
 	for target in targets:
 		print("Compiling for: ", target)
 		iree_tflite_compile.compile_file(
