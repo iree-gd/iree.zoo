@@ -27,26 +27,26 @@ def setup_gdscript(model, url):
     for output_detail in output_details:
         outputs += f"\n## {output_detail['name']}: {types[output_detail['dtype']]} {output_detail['shape']}"
     gdscript_file = f"""@icon("res://addons/iree-gd/logo.svg")
-extends Node
+extends IREEModuleRunner
 class_name IREEModule_{url}
 
-var module: IREEModule
+func _load_module() -> IREEModule:
+    match OS.get_name():
+        "Windows", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
+           return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.vulkan-spirv.vmfb")
+        "macOS", "iOS":
+            return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
+        "Android":
+            return IREEModule.new().load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
+        _:
+            assert(false, "Unsupported platform.")
+    return null
 
 ## INPUTS
 {inputs}## ---
 ## OUTPUTS{outputs}
-func main(inputs: Array[IREETensor]) -> Array[IREETensor]:
-    if module == null:
-        match OS.get_name():
-            "Windows", "Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
-                module = load("res://addons/iree-zoo/{url}/iree.vulkan-spirv.vmfb")
-            "macOS", "iOS":
-                module = load("res://addons/iree-zoo/{url}/iree.metal-spirv.vmfb")
-            "Android":
-                module = load("res://addons/iree-zoo/{url}/iree.llvm-cpu.vmfb")
-            _:
-                assert(false, "Unsupported platform.")
-    return module.call_module("module.main", inputs)
+func main(inputs: Array[IREETensor]) -> IREEResult:
+	return run("module.main", inputs)
 """
     with open(f"build/{url}.gd", "w") as f:
         f.write(gdscript_file)
