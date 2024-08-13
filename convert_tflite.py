@@ -17,6 +17,8 @@ def setup_gdscript(model, url):
         np.int32: "PackedInt32Array",
         np.int64: "PackedInt64Array",
         np.byte: "PackedByteArray",
+        np.uint8: "PackedByteArray",
+        np.int8: "PackedByteArray",
         np.float32: "PackedFloat32Array",
         np.float64: "PackedFloat64Array",
     }
